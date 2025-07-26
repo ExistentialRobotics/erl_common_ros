@@ -1,0 +1,67 @@
+# docker compose file for rosbag converter
+# Notes:
+# - Before use this file, make sure you have the folowing varibles set in the `.env` file:
+#    - `INPUT_BAG_FILE_NAME`: the input ros1 bag file name
+#    - `OUTPUT_BAG_DIR_DIR`: the directory to save the output ros2 bag folder
+#    - `OUTPUT_BAG_DIR_NAME`: the name of the output ros2 bag folder
+#    - `TOPICS`: the ros topics to convert, separated by spaces, or `--all` for all topics
+# You can run the script `convert_rosbag_1to2.bash` to set these variables and start the conversion.
+services:
+    ros1_core:
+        image: erl/ros-noetic:cpu-common
+        container_name: ros1-core
+        network_mode: host
+        environment:
+            - ROS_MASTER_URI=http://127.0.0.1:11311
+            - ROS_IP=127.0.0.1
+            - ROS_HOSTNAME=127.0.0.1
+        volumes:
+            - /dev:/dev:rw
+        command: bash -c ". /opt/ros/noetic/setup.bash && rosmaster --core"
+    ros1_bridge:
+        image: erl/ros1-bridge:latest
+        container_name: ros1-bridge
+        network_mode: host
+        environment:
+            - ROS_MASTER_URI=http://127.0.0.1:11311
+            - ROS_IP=127.0.0.1
+            - ROS_HOSTNAME=127.0.0.1
+            - ROS_DOMAIN_ID=42
+        volumes:
+            - /dev:/dev:rw
+        depends_on:
+            - ros1_core
+    rosbag_recorder:
+        image: erl/ros1-bridge:latest
+        container_name: rosbag-recorder
+        network_mode: host
+        environment:
+            - ROS_MASTER_URI=http://127.0.0.1:11311
+            - ROS_IP=127.0.0.1
+            - ROS_HOSTNAME=127.0.0.1
+            - ROS_DOMAIN_ID=42
+            - OUTPUT_BAG_DIR_DIR=${OUTPUT_BAG_DIR_DIR}
+            - OUTPUT_BAG_DIR_NAME=${OUTPUT_BAG_DIR_NAME}
+            - COMPRESSION_MODE=${COMPRESSION_MODE}
+        volumes:
+            - ${OUTPUT_BAG_DIR_DIR}:/root/ros2_bag:rw
+            - /dev:/dev:rw
+        entrypoint: bash -c ". /opt/ros/noetic/setup.bash && . /opt/ros/humble/setup.bash && \
+            ros2 bag record -o /root/ros2_bag/${OUTPUT_BAG_DIR_NAME} --compression-mode=${COMPRESSION_MODE} \
+            --compression-format zstd --compression-queue-size 100 --compression-threads `nproc` ${TOPICS}"
+        depends_on:
+            - ros1_bridge
+    rosbag_player:
+        image: erl/ros-noetic:cpu-common
+        container_name: rosbag-player
+        network_mode: host
+        environment:
+            - ROS_MASTER_URI=http://127.0.0.1:11311
+            - ROS_IP=127.0.0.1
+            - ROS_HOSTNAME=127.0.0.1
+        volumes:
+            - ${INPUT_BAG_FILE_NAME}:/root/ros1_bag:r
+            - /dev:/dev:rw
+        command: bash -c ". /opt/ros/noetic/setup.bash && rosbag play /root/ros1_bag"
+        depends_on:
+            - rosbag_recorder

@@ -13,7 +13,7 @@ erl_project_setup()
 erl_setup_ros(
     CATKIN_COMPONENTS roscpp rosgraph_msgs geometry_msgs tf2_ros #
     CATKIN_DEPENDS roscpp rosgraph_msgs geometry_msgs tf2_ros #
-    ROS2_COMPONENTS rclcpp rosgraph_msgs)
+    ROS2_COMPONENTS rclcpp rosgraph_msgs geometry_msgs tf2_ros)
 erl_add_ros_src()
 erl_install(EXECUTABLES ${${PROJECT_NAME}_COLLECTED_EXECUTABLES})
 erl_mark_project_found()

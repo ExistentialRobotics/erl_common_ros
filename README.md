@@ -1,13 +1,18 @@
-# erl_common_ros
+erl_common_ros
+==============
 
 Common ROS 1/2 utilities for ERL projects.
 
-## Requirements
+# Requirements
 
 - ROS 1 Noetic or ROS 2 Humble or later
-- Ubuntu 20.04
+- Ubuntu 20.04 for ROS1
+- Ubuntu 22.04 or later for ROS2
+- dependencies:
+    - [erl_cmake_tools](https://github.com/ExistentialRobotics/erl_cmake_tools)
+    - [erl_common](https://github.com/ExistentialRobotics/erl_common)
 
-## Installation
+# Setup
 
 Clone this repository into your ROS 1/2 workspace:
 

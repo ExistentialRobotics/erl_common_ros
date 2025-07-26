@@ -20,7 +20,10 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -y && apt install -y \
     software-properties-common \
-    curl
+    curl \
+    mesa-utils \
+    libgl1-mesa-glx \
+    x11-apps
 
 RUN add-apt-repository universe
 RUN curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb"
@@ -31,6 +34,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
     ros-humble-desktop-full \
     ros-dev-tools \
     python3-colcon-common-extensions
+RUN rosdep init && rosdep update
 
 # clean
 RUN apt-get clean  && rm -rf /var/lib/apt/lists/*

@@ -4,10 +4,12 @@ FROM ${BASE_IMAGE}
 ARG APT_MIRROR=""
 RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup &&\
     if [ -n "$APT_MIRROR" ]; then \
-        sed -i "s|http://archive.ubuntu.com/ubuntu/|$APT_MIRROR|g" /etc/apt/sources.list; \
+    sed -i "s|http://archive.ubuntu.com/ubuntu/|$APT_MIRROR|g" /etc/apt/sources.list; \
     fi
 RUN DEBIAN_FRONTEND=noninteractive apt update -y
-RUN DEBIAN_FRONTEND=noninteractive apt install -y ubuntu-desktop-minimal
+RUN DEBIAN_FRONTEND=noninteractive apt install -y mesa-utils \
+    libgl1-mesa-glx \
+    x11-apps
 RUN DEBIAN_FRONTEND=noninteractive apt install -y \
     software-properties-common lsb-release vim locales apt-utils ca-certificates curl iproute2
 
@@ -29,5 +31,5 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y \
 RUN rosdep init && rosdep fix-permissions
 RUN apt-get clean  && rm -rf /var/lib/apt/lists/*
 RUN if [ -n "$APT_MIRROR" ]; then \
-        mv /etc/apt/sources.list.backup /etc/apt/sources.list; \
+    mv /etc/apt/sources.list.backup /etc/apt/sources.list; \
     fi
