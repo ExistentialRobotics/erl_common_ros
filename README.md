@@ -14,52 +14,56 @@
 - **Bag File Conversion**: Scripts for converting ROS1 bags to ROS2 format
 - **Cross-Platform**: Compatible with both ROS1 and ROS2
 
-## Installation
+## Getting Started
+
+### Create Workspace
+
+```bash
+cd <your_workspace>
+mkdir -p src
+vcs import --input https://raw.githubusercontent.com/ExistentialRobotics/erl_common_ros/refs/head/main/erl_common_ros.repos src
+```
 
 ### Prerequisites
 
-- ROS1 Noetic or ROS2 Humble or later
 - Ubuntu 20.04 for ROS1
 - Ubuntu 22.04 or later for ROS2
+- ROS1 Noetic or ROS2 Humble or later
 - C++17 compatible compiler
-- CMake 3.16 or higher
+- CMake 3.24 or higher
 
 ### Dependencies
 
 This package depends on the following ERL packages:
-- `erl_cmake_tools`
-- `erl_common`
+- [erl_cmake_tools](https://github.com/ExistentialRobotics/erl_cmake_tools)
+- [erl_common](https://github.com/ExistentialRobotics/erl_common)
 
 Standard ROS dependencies:
 - `geometry_msgs`
 - `tf2_ros`
 - `rosgraph_msgs`
 
+```bash
+# Ubuntu 20.04
+wget -qO - https://raw.githubusercontent.com/ExistentialRobotics/erl_common/refs/heads/main/scripts/setup_ubuntu_20.04.bash | bash
+# Ubuntu 22.04, 24.04
+wget -qO - https://raw.githubusercontent.com/ExistentialRobotics/erl_common/refs/heads/main/scripts/setup_ubuntu_22.04_24.04.bash | bash
+```
+
 We also provide [docker files](docker/) for easy setup.
 
-### Building from Source
 
-1. **Clone the repository** into your ROS workspace:
-   ```bash
-   cd <your_ros_workspace>
-   mkdir -p src
-   vcs import --input https://raw.githubusercontent.com/ExistentialRobotics/erl_common_ros/main/erl_common_ros.repos src
-   ```
+### Building the Package
 
-2. **Build the package**:
-   ```bash
-   cd <your_ros_workspace>
-   source /opt/ros/<distro>/setup.bash  # Replace <distro> with 'noetic' or 'humble'
-   catkin build erl_common_ros  # For ROS1
-   colcon build --packages-up-to erl_common_ros --cmake-args -DCMAKE_BUILD_TYPE=Release  # For ROS2
-   ```
-
-3. **Source the workspace**:
-   ```bash
-   cd <your_ros_workspace>
-   source devel/setup.bash  # for ROS1
-   source install/setup.bash  # for ROS2
-   ```
+```bash
+cd <your_workspace>
+# for ROS1
+catkin build erl_common_ros
+source devel/setup.bash
+# for ROS2
+colcon build --packages-up-to erl_common_ros
+source install/setup.bash
+```
 
 ## Available Nodes
 
