@@ -1,8 +1,31 @@
+#include "erl_common/ros2_topic_params.hpp"
+#include "erl_common/yaml.hpp"
+
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 
 #include <memory>
+
+using namespace erl::common;
+using namespace erl::common::ros_params;
+
+static rclcpp::Node *g_curr_node = nullptr;
+
+struct Options : public Yamlable<Options> {
+    Ros2TopicParams transform_topic{"transform"};
+
+    ERL_REFLECT_SCHEMA(Options, ERL_REFLECT_MEMBER(Options, transform_topic));
+
+    bool
+    PostDeserialization() override {
+        if (transform_topic.path.empty()) {
+            RCLCPP_ERROR(g_curr_node->get_logger(), "transform_topic parameter is empty");
+            return false;
+        }
+        return true;
+    }
+};
 
 class TransformToTfNode : public rclcpp::Node {
     rclcpp::Subscription<geometry_msgs::msg::TransformStamped>::SharedPtr m_sub_transform_;
@@ -12,25 +35,30 @@ class TransformToTfNode : public rclcpp::Node {
 public:
     TransformToTfNode()
         : Node("transform_to_tf_node") {
-        // Declare parameters
-        this->declare_parameter("transform_topic", "transform");
+
+        g_curr_node = this;
+        auto logger = this->get_logger();
+        Options cfg;
+        if (!cfg.LoadFromRos2(this, "")) {
+            RCLCPP_FATAL(logger, "Failed to load parameters");
+            rclcpp::shutdown();
+            return;
+        }
+        RCLCPP_INFO(logger, "Loaded node parameters:\n%s", cfg.AsYamlString().c_str());
 
         // Initialize the transform broadcaster
         m_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
-        // Get parameter value
-        std::string transform_topic = this->get_parameter("transform_topic").as_string();
-
         // Subscribe to the transform topic
         m_sub_transform_ = this->create_subscription<geometry_msgs::msg::TransformStamped>(
-            transform_topic,
-            1,
+            cfg.transform_topic.path,
+            cfg.transform_topic.GetQoS(),
             std::bind(&TransformToTfNode::Callback, this, std::placeholders::_1));
 
         RCLCPP_INFO(
-            this->get_logger(),
+            logger,
             "TransformToTfNode initialized, listening to topic: %s",
-            transform_topic.c_str());
+            cfg.transform_topic.path.c_str());
     }
 
     void
@@ -49,7 +77,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char **argv) {
     rclcpp::init(argc, argv);
     auto node = std::make_shared<TransformToTfNode>();
     rclcpp::spin(node);

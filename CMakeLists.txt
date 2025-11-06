@@ -9,7 +9,7 @@ message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 if (NOT COMMAND erl_project_setup)
     find_package(erl_cmake_tools REQUIRED)
 endif ()
-erl_project_setup()
+erl_project_setup(ERL_PACKAGES erl_common)
 erl_setup_ros(
     CATKIN_COMPONENTS roscpp rosgraph_msgs geometry_msgs tf2_ros #
     CATKIN_DEPENDS roscpp rosgraph_msgs geometry_msgs tf2_ros #

@@ -6,14 +6,13 @@ class TransformToTfNode {
 
     ros::NodeHandle m_nh_;
     ros::Subscriber m_sub_transform_;
-    std::unique_ptr<tf2_ros::TransformBroadcaster> m_broadcaster_;
+    tf2_ros::TransformBroadcaster m_broadcaster_;
     bool m_verbose_ = true;
 
 public:
-    TransformToTfNode(ros::NodeHandle& nh)
+    TransformToTfNode(ros::NodeHandle &nh)
         : m_nh_(nh) {
         // Initialize the transform broadcaster
-        m_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>();
         // Subscribe to the transform topic
         std::string transform_topic = "transform";
         nh.param("transform_topic", transform_topic, transform_topic);
@@ -22,9 +21,9 @@ public:
     }
 
     void
-    Callback(const geometry_msgs::TransformStamped::ConstPtr& msg) {
+    Callback(const geometry_msgs::TransformStamped::ConstPtr &msg) {
         // Broadcast the transform
-        m_broadcaster_->sendTransform(*msg);
+        m_broadcaster_.sendTransform(*msg);
         if (m_verbose_) {
             ROS_INFO(
                 "Broadcasting transform from %s to %s",
@@ -36,7 +35,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char **argv) {
     ros::init(argc, argv, "transform_to_tf_node");
     ros::NodeHandle nh("~");
     TransformToTfNode node(nh);
