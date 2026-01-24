@@ -33,7 +33,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt update -y && apt upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt install -y \
     ros-humble-desktop-full \
     ros-dev-tools \
-    python3-colcon-common-extensions
+    python3-colcon-common-extensions \
+    ros-humble-tf2 \
+    ros-humble-tf2-eigen \
+    ros-humble-tf2-geometry-msgs \
+    ros-humble-tf2-kdl \
+    ros-humble-tf2-msgs \
+    ros-humble-tf2-py \
+    ros-humble-tf2-ros \
+    ros-humble-tf2-sensor-msgs \
+    ros-humble-tf2-tools
 RUN rosdep init && rosdep update
 
 # clean
