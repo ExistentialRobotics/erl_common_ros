@@ -25,7 +25,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update -y && apt install -y \
     software-properties-common \
     curl \
     mesa-utils \
-    libgl1-mesa-glx \
+    libgl1-mesa-dri \
     x11-apps
 
 RUN add-apt-repository universe
