@@ -2,6 +2,8 @@
 
 set -e
 
+SCRIPT_DIR=$(cd "$(dirname ${BASH_SOURCE[0]})" && pwd)
+
 # check usage convert_rosbag_1to2.bash <input_bagfile> <output_bag_dir> <topics>
 if [ "$#" -gt 1 ]; then
     # Set default values
@@ -71,8 +73,8 @@ echo "COMPRESSION_MODE=${COMPRESSION_MODE}" >> .env
 
 echo "Starting conversion from ROS 1 to ROS 2 bag format..."
 echo ">> Press Ctrl+C to stop the conversion at any time. <<"
-docker compose -f rosbag_converter.yml up
-docker compose -f rosbag_converter.yml down
+docker compose -f ${SCRIPT_DIR}/rosbag_converter.yml up
+docker compose -f ${SCRIPT_DIR}/rosbag_converter.yml down
 
 sudo chown -R $(whoami):$(whoami) "${OUTPUT_BAG_DIR}"
 echo "Conversion completed. Output bag files are in: ${OUTPUT_BAG_DIR}"
