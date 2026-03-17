@@ -67,8 +67,10 @@ RUN python3 -m pip install -U \
 # add ROS2 source
 WORKDIR /root/ros2_humble
 RUN mkdir -p src && vcs import --input https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos src
-RUN rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys \
-    "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
+RUN rosdep fix-permissions
+RUN DEBIAN_FRONTEND=noninteractive apt install -y libopencv-dev
+RUN ROS_DISTRO=humble rosdep update && rosdep install --from-paths src --ignore-src -y --skip-keys \
+    "fastcdr rti-connext-dds-6.0.1 urdfdom_headers libopencv-videoio libopencv-imgproc libopencv-highgui libopencv-core libopencv-imgcodecs"
 RUN colcon build --merge-install --install-base /opt/ros/humble --cmake-args -DCMAKE_INSTALL_PREFIX=/opt/ros/humble
 
 # build ros1_bridge
