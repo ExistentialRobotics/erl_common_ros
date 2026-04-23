@@ -19,6 +19,7 @@
     <depend condition="$ROS_VERSION == 2">rclpy</depend>
 
     <depend>geometry_msgs</depend>
+    <depend>tf2_msgs</depend>
     <depend>tf2_ros</depend>
     <depend>rosgraph_msgs</depend>
 
