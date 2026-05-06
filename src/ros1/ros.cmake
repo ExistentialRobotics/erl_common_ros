@@ -9,3 +9,8 @@ erl_collect_targets(EXECUTABLES transform_to_tf_node) # add to the list of execu
 add_executable(clock_node src/ros1/clock_node.cpp)
 erl_target_dependencies(clock_node)
 erl_collect_targets(EXECUTABLES clock_node)
+
+# node: tf_to_path_node
+add_executable(tf_to_path_node src/ros1/tf_to_path_node.cpp)
+erl_target_dependencies(tf_to_path_node)
+erl_collect_targets(EXECUTABLES tf_to_path_node)
