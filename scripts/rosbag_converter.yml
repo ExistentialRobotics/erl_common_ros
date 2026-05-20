@@ -62,6 +62,6 @@ services:
         volumes:
             - ${INPUT_BAG_FILE_NAME}:/root/ros1_bag:r
             - /dev:/dev:rw
-        command: bash -c ". /opt/ros/noetic/setup.bash && rosbag play /root/ros1_bag"
+        command: bash -c ". /opt/ros/noetic/setup.bash && echo "Sleeping for 10 seconds..." && sleep 10 && rosbag play /root/ros1_bag"
         depends_on:
             - rosbag_recorder
