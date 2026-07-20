@@ -23,7 +23,7 @@
 ```bash
 cd <your_workspace>
 mkdir -p src
-vcs import --input https://raw.githubusercontent.com/ExistentialRobotics/erl_common_ros/refs/head/main/erl_common_ros.repos src
+vcs import --input https://raw.githubusercontent.com/ExistentialRobotics/erl_common_ros/refs/heads/main/erl_common_ros.repos src
 ```
 
 ### Prerequisites
